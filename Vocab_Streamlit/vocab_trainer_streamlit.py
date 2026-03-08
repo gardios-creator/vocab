@@ -11,8 +11,6 @@ APP_SECRET = st.secrets['APP_SECRET']
 REFRESH_TOKEN = st.secrets['REFRESH_TOKEN']
 FILE_PATH = "/VocTrainer/Vocab_DB.xlsx"
 
-
-
 # --- Constants ---
 LAST_ASKED_COL = 'Last_Asked'
 STAGE_COL = 'Stage'
@@ -207,8 +205,12 @@ if st.session_state.sampled_index is not None:
                 st.session_state.df.at[idx, 'Translation'] = u_trans
                 st.session_state.df.at[idx, 'Hint'] = u_hint
                 st.session_state.df.at[idx, 'Category'] = u_cat
-                st.session_state.df.at[idx, STAGE_COL] = u_stage
+                if u_cat in ACQUIRED_CATEGORIES:
+                    st.session_state.df.at[idx, STAGE_COL] = 0
+                else:
+                    st.session_state.df.at[idx, STAGE_COL] = u_stage
                 st.success("Entry updated!")
+
 
     st.caption(f"Cat: {row['Category']} | Stage: {row[STAGE_COL]} | Attempts: {row['Attempts']} | Session total: {st.session_state.counter_tested}")
 else:
