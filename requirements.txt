@@ -78,3 +78,4 @@ yarg==0.1.9
 yarl==1.22.0
 streamlit>=1.0.0
 dropbox>=11.0.0
+xlsxwriter==3.1.4
