@@ -6,8 +6,12 @@ import numpy as np
 from datetime import date, timedelta
 
 # --- Configuration ---
-ACCESS_TOKEN = st.secrets["DROPBOX_TOKEN"]
+APP_KEY = st.secrets['APP_KEY']
+APP_SECRET = st.secrets['APP_SECRET']
+REFRESH_TOKEN = st.secrets['REFRESH_TOKEN']
 FILE_PATH = "/VocTrainer/Vocab_DB.xlsx"
+
+
 
 # --- Constants ---
 LAST_ASKED_COL = 'Last_Asked'
@@ -20,7 +24,11 @@ REVIEW_STAGE_WEIGHT = 6
 NEW_STAGE_WEIGHT = 4
 SORTING_COLS = ['Language', 'Category', 'Attempts']
 
-dbx = dropbox.Dropbox(ACCESS_TOKEN)
+dbx = dropbox.Dropbox(
+    app_key=APP_KEY,
+    app_secret=APP_SECRET,
+    oauth2_refresh_token=REFRESH_TOKEN
+)
 
 # --- Data Loading and Saving ---
 @st.cache_data
@@ -257,10 +265,10 @@ if st.session_state.sampled_index is not None:
     if st.session_state.show_original:
         st.info(f"**Original:** {df.loc[idx, 'Original']}")
     if st.session_state.show_translation:
-        st.info(f"**Translation:** {df.loc[idx, 'Translation']}")
+        st.success(f"**Translation:** {df.loc[idx, 'Translation']}")
     if st.session_state.display_hint:
         hint_text = df.loc[idx, 'Hint']
-        if hint_text:
+        if pd.notna(hint_text) and str(hint_text).strip():
             st.info(f"**Hint:** {hint_text}")
     
     # update form remains unchanged
@@ -289,4 +297,3 @@ with col1:
     if st.button("💾 Save to Dropbox", use_container_width=True, key="save"):
         save_data(df)
         st.success("Database saved to Dropbox!")
-
