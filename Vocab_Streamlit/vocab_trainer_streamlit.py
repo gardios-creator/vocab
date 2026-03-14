@@ -156,6 +156,12 @@ st.session_state.lang_choice = st.sidebar.selectbox("Language", sorted(st.sessio
 st.session_state.cat_choice = st.sidebar.selectbox("Category", ["all"] + sorted(st.session_state.df['Category'].unique().tolist()))
 st.session_state.mode_choice = st.sidebar.selectbox("Mode", ["Didactical", "Uniform"])
 
+if st.sidebar.button("🔄 Reload from Excel", use_container_width=True):
+    st.cache_data.clear()
+    st.session_state.df = load_data()
+    st.sidebar.success("Fresh data loaded!")
+    st.rerun()
+    
 if st.sidebar.button("💾 Save Database", use_container_width=True):
     save_data(st.session_state.df)
     st.sidebar.success("Database Saved!")
