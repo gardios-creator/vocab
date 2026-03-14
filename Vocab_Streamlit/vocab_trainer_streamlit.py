@@ -216,6 +216,9 @@ if st.session_state.sampled_index is not None:
                 else:
                     st.session_state.df.at[idx, STAGE_COL] = u_stage
                 st.success("Entry updated!")
+                # CRITICAL: Save to Dropbox immediately
+                save_data(st.session_state.df)
+                st.success("Updated and Saved to Dropbox!")
 
 
     st.caption(f"Cat: {row['Category']} | Stage: {row[STAGE_COL]} | Attempts: {row['Attempts']} | Session total: {st.session_state.counter_tested}")
