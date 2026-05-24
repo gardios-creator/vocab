@@ -64,6 +64,14 @@ def save_data(df):
     
     dbx.files_upload(output.getvalue(), FILE_PATH, mode=dropbox.files.WriteMode.overwrite)
 
+@st.dialog("Confirm Save")
+def confirm_save_dialog():
+    """Modal dialog to confirm database save."""
+    st.warning("Are you sure you want to save the current database to Dropbox? This will overwrite the existing file.")
+    if st.button("Yes, Save to Dropbox", use_container_width=True):
+        save_data(st.session_state.df)
+        st.rerun()
+
 def increment_progress(idx):
     """Update attempt counters and spaced-repetition stages."""
     if st.session_state.stage_updated:
@@ -161,10 +169,13 @@ if st.sidebar.button("🔄 Reload from Excel", use_container_width=True):
     st.session_state.df = load_data()
     st.sidebar.success("Fresh data loaded!")
     st.rerun()
-    
+
+# Pushes the save button much lower to avoid accidental clicks
+for _ in range(15):
+    st.sidebar.write("")
+
 if st.sidebar.button("💾 Save Database", use_container_width=True):
-    save_data(st.session_state.df)
-    st.sidebar.success("Database Saved!")
+    confirm_save_dialog()
 
 # --- Main Display ---
 st.button("🎲 NEXT WORD", use_container_width=True, on_click=get_random_instance)
