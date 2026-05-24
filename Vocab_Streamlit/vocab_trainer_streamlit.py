@@ -72,6 +72,20 @@ def confirm_save_dialog():
         save_data(st.session_state.df)
         st.rerun()
 
+@st.dialog("Quit Application")
+def quit_dialog():
+    """Modal dialog to handle exit and optional save."""
+    st.warning("Do you want to save your progress before quitting?")
+    if st.button("💾 Save and Quit", use_container_width=True):
+        save_data(st.session_state.df)
+        st.session_state.quit = True
+        st.rerun()
+    if st.button("🚪 Quit without Saving", use_container_width=True):
+        st.session_state.quit = True
+        st.rerun()
+    if st.button("✖️ Cancel", use_container_width=True):
+        st.rerun()
+
 def increment_progress(idx):
     """Update attempt counters and spaced-repetition stages."""
     if st.session_state.stage_updated:
@@ -156,8 +170,13 @@ if 'sampled_index' not in st.session_state:
 if 'counter_tested' not in st.session_state:
     st.session_state.counter_tested = 0
 
-for flag in ['stage_updated','show_original','show_translation','show_update','display_hint']:
+for flag in ['stage_updated','show_original','show_translation','show_update','display_hint', 'quit']:
     if flag not in st.session_state: st.session_state[flag] = False
+
+if st.session_state.quit:
+    st.title("Session Ended")
+    st.info("Your changes have been processed. You can now close this browser tab.")
+    st.stop()
 
 # --- Sidebar ---
 st.session_state.lang_choice = st.sidebar.selectbox("Language", sorted(st.session_state.df['Language'].unique().tolist()))
@@ -176,6 +195,9 @@ for _ in range(15):
 
 if st.sidebar.button("💾 Save Database", use_container_width=True):
     confirm_save_dialog()
+
+if st.sidebar.button("🚪 Quit", use_container_width=True):
+    quit_dialog()
 
 # --- Main Display ---
 st.button("🎲 NEXT WORD", use_container_width=True, on_click=get_random_instance)
