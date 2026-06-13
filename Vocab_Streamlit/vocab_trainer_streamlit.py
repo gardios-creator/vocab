@@ -35,7 +35,9 @@ def load_data():
         _, res = dbx.files_download(FILE_PATH)
         with io.BytesIO(res.content) as f:
             df = pd.read_excel(f, engine='openpyxl')
-    except:
+    except Exception as e:
+        st.error(f"Error connecting to Dropbox: {e}")
+        # Return empty template if file doesn't exist, but consider if you want to stop here
         df = pd.DataFrame(columns=['Language', 'Original', 'Translation', 'Hint', 'Category', 'Attempts', LAST_ASKED_COL, STAGE_COL])
     
     df = df.fillna('')
